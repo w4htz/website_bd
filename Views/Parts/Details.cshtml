@@ -1,0 +1,19 @@
+@model AutoPartsApp.Models.Part
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<h1>@Model.Name</h1>
+<p><b>Артикул:</b> @Model.Article</p>
+<p><b>Производитель:</b> @Model.Manufacturer</p>
+<p><b>Цена:</b> @Model.Price.ToString("C")</p>
+<p><b>На складе:</b> @Model.Stock</p>
+<p><b>Описание:</b> @Model.Description</p>
+
+<form asp-action="Buy" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <input type="number" name="quantity" value="1" min="1" max="@Model.Stock" />
+    <button type="submit" @(Model.Stock == 0 ? "disabled" : "")>Купить</button>
+</form>
+
+<p><a asp-action="Index">← Назад к каталогу</a></p>

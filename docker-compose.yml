@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: autopartsdb
+      POSTGRES_USER: partsuser
+      POSTGRES_PASSWORD: partspass
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U partsuser -d autopartsdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__Default=Host=db;Port=5432;Database=autopartsdb;Username=partsuser;Password=partspass;SslMode=Disable
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

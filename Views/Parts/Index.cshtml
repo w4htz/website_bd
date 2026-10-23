@@ -1,0 +1,41 @@
+@model List<AutoPartsApp.Models.Part>
+@{
+    ViewData["Title"] = "Каталог автозапчастей";
+    var message = TempData["Message"] as string;
+}
+
+<h1>Каталог автозапчастей</h1>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div style="padding:10px; background:#e7f5e7; border:1px solid #3c3; margin:10px 0;">
+        @message
+    </div>
+}
+
+<p><a asp-action="Create">+ Добавить запчасть</a></p>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <tr>
+        <th>Id</th><th>Название</th><th>Артикул</th><th>Производитель</th>
+        <th>Цена</th><th>Остаток</th><th></th>
+    </tr>
+    @foreach (var p in Model)
+    {
+        <tr>
+            <td>@p.Id</td>
+            <td><a asp-action="Details" asp-route-id="@p.Id">@p.Name</a></td>
+            <td>@p.Article</td>
+            <td>@p.Manufacturer</td>
+            <td>@p.Price.ToString("C")</td>
+            <td>@p.Stock</td>
+            <td>
+                <form asp-action="Buy" method="post" style="display:inline;">
+                    <input type="hidden" name="id" value="@p.Id" />
+                    <input type="number" name="quantity" value="1" min="1" max="@p.Stock" style="width:50px;" />
+                    <button type="submit" @(p.Stock == 0 ? "disabled" : "")>Купить</button>
+                </form>
+            </td>
+        </tr>
+    }
+</table>
